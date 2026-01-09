@@ -1,0 +1,57 @@
+# Spec-Kit Plus Project Configuration
+# This file defines project metadata, enforced directory structure, and development phases
+
+project:
+  name: "Todo Full-Stack Web Application"
+  version: "0.1.0"
+  description: "Full-stack todo application with Next.js 16+ frontend, FastAPI backend, and Neon PostgreSQL"
+  created: "2026-01-06"
+
+enforced_directories:
+  specs: "Feature specifications and technical documentation"
+  frontend: "Next.js 16+ App Router frontend"
+  backend: "FastAPI + SQLModel backend"
+  history: "Prompt history records and architectural decision records"
+
+phases:
+  phase1-console:
+    name: "Console Foundation"
+    description: "Initial scaffolding and project structure"
+    status: "active"
+
+  phase2-web:
+    name: "Web Application"
+    description: "Frontend and backend implementation"
+    status: "pending"
+
+tech_stack:
+  frontend:
+    framework: "Next.js"
+    version: "16+"
+    language: "TypeScript"
+    styling: "Tailwind CSS"
+    ui_library: "shadcn/ui (future)"
+
+  backend:
+    framework: "FastAPI"
+    version: "0.109+"
+    language: "Python"
+    version: "3.11+"
+    orm: "SQLModel"
+    database: "Neon Serverless PostgreSQL"
+
+  auth:
+    provider: "Better Auth"
+    managed_tables: ["users"]
+
+documentation_standards:
+  spec_references: "@specs/..."
+  cross_links: "All docs must reference specs using @specs/ syntax"
+  layered_guidance: "CLAUDE.md files provide non-overlapping guidance per directory"
+
+validation:
+  success_criteria:
+    - "New contributors can setup in <15 minutes"
+    - "docker-compose up succeeds within 60 seconds"
+    - "All @specs/... links are valid"
+    - "npm run dev and uvicorn start successfully"

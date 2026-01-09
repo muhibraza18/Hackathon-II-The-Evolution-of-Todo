@@ -1,0 +1,22 @@
+[project]
+name = "todo-evolution-phase1"
+version = "1.0.0"
+description = "Todo Evolution - Phase I: In-Memory CLI Todo Application"
+readme = "README.md"
+requires-python = ">=3.13"
+license = {text = "MIT"}
+authors = [
+    {name = "Todo Evolution Team"}
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]

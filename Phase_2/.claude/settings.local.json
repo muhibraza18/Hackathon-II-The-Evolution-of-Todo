@@ -1,0 +1,43 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(cd:*)",
+      "Bash(powershell:*)",
+      "Bash(test:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_2\\\\.specify\\\\scripts\\\\powershell\\\\check-prerequisites.ps1\" -Json -RequireTasks -IncludeTasks)",
+      "Bash(mkdir:*)",
+      "Bash(touch:*)",
+      "Bash(powershell.exe -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_2\\\\.specify\\\\scripts\\\\powershell\\\\create-new-feature.ps1\" -Json -Number 1 -ShortName \"task-crud\" \"Implement Basic Task CRUD Operations \\(Unauthenticated Version\\)\n\nTarget outcome: Fully functional task management with persistent storage\nFocus: Backend API + Frontend UI integration without authentication layer\n\nSuccess criteria:\n- All 6 REST endpoints implemented and tested \\(GET, POST, PUT, DELETE, PATCH /complete\\)\n- Task model with fields: id, user_id, title, description, completed, created_at, updated_at\n- Frontend displays task list with create/edit/delete/complete functionality\n- Responsive Tailwind CSS design for mobile and desktop\n- Error handling for network failures and validation errors\n- Loading indicators during API calls\n- Neon PostgreSQL stores all tasks persistently\n- Dummy user_id = test-user-1 used throughout\n\nDeliverables:\n1. Updated specifications:\n   - specs/features/task-crud.md \\(detailed user stories and acceptance criteria\\)\n   - specs/api/rest-endpoints.md \\(complete API documentation\\)\n   - specs/ui/components.md \\(component structure and props\\)\n   - specs/ui/pages.md \\(page layouts and data flow\\)\n\n2. Backend implementation:\n   - backend/models.py \\(Task SQLModel with validations\\)\n   - backend/routes/tasks.py \\(all 6 endpoint handlers\\)\n   - backend/db.py \\(database connection and session management\\)\n   - backend/main.py \\(FastAPI app with CORS, route registration\\)\n\n3. Frontend implementation:\n   - frontend/lib/api.ts \\(typed API client with error handling\\)\n   - frontend/components/TaskList.tsx \\(displays all tasks\\)\n   - frontend/components/TaskForm.tsx \\(create/edit form\\)\n   - frontend/components/TaskItem.tsx \\(individual task with actions\\)\n   - frontend/app/page.tsx \\(main tasks page\\)\n\n4. Testing evidence:\n   - Screenshots or video of CRUD operations working\n   - API endpoint test results \\(status codes, response formats\\)\n\nConstraints:\n- Use dummy user_id = test-user-1 for all operations\n- No login/signup functionality yet\n- No JWT or authentication headers\n- All tasks visible to everyone \\(no filtering by user\\)\n- Title: 1-200 characters \\(required\\)\n- Description: 0-1000 characters \\(optional\\)\n- API base URL: http://localhost:8000/api\n- Frontend dev server: http://localhost:3000\n\nTechnical requirements:\n- Backend: Pydantic models for request/response validation\n- Frontend: TypeScript with strict type checking\n- Database: Use SQLModel select\\(\\) for queries, session.add\\(\\) for inserts\n- Error responses: { detail: error message } format\n- Success responses: Return created/updated object or array of objects\n- HTTP status codes: 200 \\(success\\), 201 \\(created\\), 404 \\(not found\\), 422 \\(validation error\\), 500 \\(server error\\)\n\nNot building:\n- Authentication system\n- User isolation/filtering\n- Task categories or tags\n- Due dates or priorities\n- File attachments\n- Task sharing or collaboration\n- Search functionality\n- Pagination \\(implement simple list first\\)\")",
+      "Bash(if [ -d \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_2\\\\specs\\\\001-task-crud\\\\checklists\" ])",
+      "Bash(then ls -la \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_2\\\\specs\\\\001-task-crud\\\\checklists\")",
+      "Bash(else echo \"No checklists directory found\")",
+      "Bash(fi)",
+      "Bash(git rev-parse --git-dir)",
+      "Bash(python -c \"from init_db import create_db_and_tables; create_db_and_tables\\(\\)\")",
+      "Bash(pip install -r requirements.txt)",
+      "Bash(curl http://localhost:8000/health)",
+      "Bash(timeout 30s cd \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_2\\\\backend\")",
+      "Bash(uvicorn main:app --host 0.0.0.0 --port 8000)",
+      "Bash(timeout 10s curl http://localhost:8000/health)",
+      "Bash(python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload)",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, ''./backend''\\); from backend.main import app; import uvicorn; uvicorn.run\\(app, host=''0.0.0.0'', port=8000\\)\")",
+      "Bash(npm install)",
+      "Bash(findstr -i docker)",
+      "Bash(python -c \"\nimport os\nfrom dotenv import load_dotenv\nload_dotenv\\(\\)\n\nfrom auth import JWT_SECRET, verify_token\nprint\\(''JWT Secret is configured:'', bool\\(JWT_SECRET\\)\\)\nprint\\(''JWT Secret length:'', len\\(JWT_SECRET\\) if JWT_SECRET else 0\\)\n\")",
+      "Bash(curl -H \"Origin: http://localhost:3005\" -H \"Access-Control-Request-Method: GET\" -H \"Access-Control-Request-Headers: X-Requested-With\" -X OPTIONS -v http://localhost:8000/health)",
+      "Bash(curl -H \"Origin: http://localhost:3005\" http://localhost:8000/health)",
+      "Bash(curl -X POST \"http://localhost:8000/api/auth/sign-up/email\" -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"test@example.com\"\",\"\"password\"\":\"\"password123\"\"}\")",
+      "Bash(curl -X GET \"http://localhost:8000/api/auth/get-session\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MzRlOWIyNi0wM2UxLTRlZGItYjcxNS02MzgxMGVlNDY5MWIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3Njg0OTE0NTIsImlhdCI6MTc2Nzg4NjY1Mn0.XHnHIuE53Byk93pK1Q8Or_wJPAi2ovxogdeNT0e6sic\")",
+      "Bash(curl -X GET \"http://localhost:8000/api/tasks\" -H \"Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5MzRlOWIyNi0wM2UxLTRlZGItYjcxNS02MzgxMGVlNDY5MWIiLCJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJleHAiOjE3Njg0OTE0NTIsImlhdCI6MTc2Nzg4NjY1Mn0.XHnHIuE53Byk93pK1Q8Or_wJPAi2ovxogdeNT0e6sic\")",
+      "Bash(python -m uvicorn main:app --host 0.0.0.0 --port 8000)",
+      "Bash(python -c \"\nfrom auth_endpoint import signin, SigninRequest\nfrom db import get_session\nfrom sqlmodel import Session\n\n# Create a test request\nrequest = SigninRequest\\(email=''test2@example.com'', password=''password123''\\)\n\n# Get session\nsession_gen = get_session\\(\\)\nsession = next\\(session_gen\\)\n\ntry:\n    result = signin\\(request, session\\)\n    print\\(''Signin result:'', result\\)\nexcept Exception as e:\n    print\\(''Error occurred:'', str\\(e\\)\\)\n    import traceback\n    traceback.print_exc\\(\\)\n\")",
+      "Bash(curl -X POST \"http://localhost:8000/api/auth/signin\" -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"test2@example.com\"\",\"\"password\"\":\"\"password123\"\"}\")",
+      "Bash(curl -X POST \"http://localhost:8000/api/auth/sign-in/email\" -H \"Content-Type: application/json\" -d \"{\"\"email\"\":\"\"test2@example.com\"\",\"\"password\"\":\"\"password123\"\"}\" -v)",
+      "Bash(python -c \"\nfrom auth_endpoint import signin, SigninRequest\nfrom db import get_session\nfrom sqlmodel import Session\n\n# Create a test request\nrequest = SigninRequest\\(email=''nur2006deniz@gmail.com'', password=''password123''\\)\n\n# Get session\nsession_gen = get_session\\(\\)\nsession = next\\(session_gen\\)\n\ntry:\n    result = signin\\(request, session\\)\n    print\\(''Signin result:'', result\\)\nexcept Exception as e:\n    print\\(''Error occurred:'', str\\(e\\)\\)\n    import traceback\n    traceback.print_exc\\(\\)\n\")",
+      "Bash(npm run build)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
