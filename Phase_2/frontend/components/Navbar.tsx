@@ -55,6 +55,16 @@ const Navbar = () => {
               {!loading && user ? (
                 <>
                   <Link
+                    href="/"
+                    className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
+                      isActive('/')
+                        ? 'bg-emerald-50 text-emerald-700'
+                        : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
+                    }`}
+                  >
+                    Home
+                  </Link>
+                  <Link
                     href="/tasks"
                     className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-200 ${
                       isActive('/tasks')
@@ -152,6 +162,17 @@ const Navbar = () => {
                   </span>
                 </div>
               </div>
+              <Link
+                href="/"
+                className={`block px-3 py-2 rounded-lg text-base font-semibold transition-colors duration-200 ${
+                  isActive('/')
+                    ? 'bg-emerald-50 text-emerald-700'
+                    : 'text-gray-700 hover:bg-emerald-50 hover:text-emerald-700'
+                }`}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
               <Link
                 href="/tasks"
                 className={`block px-3 py-2 rounded-lg text-base font-semibold transition-colors duration-200 ${
