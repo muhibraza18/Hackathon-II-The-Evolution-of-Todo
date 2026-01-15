@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch --all --prune)",
+      "Bash(dir \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_3\\\\history\\\\prompts\\\\mcp-server-tasks\" /s)",
+      "Bash(dir \"C:\\\\Users\\\\Wajahat traders\\\\Desktop\\\\Quarter 4\\\\Hackathon-2\\\\Phase_3\\\\backend\")",
+      "Bash(python -c \"import sys; sys.path.insert\\(0, ''.''\\); from app.main import app; import uvicorn; uvicorn.run\\(app, host=''0.0.0.0'', port=8000\\)\")",
+      "Bash(python start_server.py)",
+      "Bash(PYTHONPATH=. python start_server.py)",
+      "Bash(npm run dev)",
+      "Bash(dir C:UsersWajahat tradersDesktopQuarter 4Hackathon-2Phase_3backendmodels.py)",
+      "Bash(tasklist)",
+      "Bash(findstr python)",
+      "Bash(dir *.py)",
+      "Bash(pip show mcp)"
+    ]
+  }
+}

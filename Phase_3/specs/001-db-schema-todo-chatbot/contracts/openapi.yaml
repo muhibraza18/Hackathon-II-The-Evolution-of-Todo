@@ -1,0 +1,513 @@
+openapi: 3.0.3
+info:
+  title: Todo AI Chatbot Database API
+  description: API specification for the Todo AI Chatbot database operations
+  version: 1.0.0
+  contact:
+    name: Todo AI Chatbot Team
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+paths:
+  /api/tasks:
+    get:
+      summary: Get all tasks for a user
+      description: Retrieve all tasks for the specified user
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user whose tasks to retrieve
+          schema:
+            type: string
+        - name: completed
+          in: query
+          required: false
+          description: Filter by completion status (true/false)
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Successfully retrieved tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new task
+      description: Create a new task for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - title
+              properties:
+                user_id:
+                  type: string
+                  description: ID of the user creating the task
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                  description: Title of the task
+                description:
+                  type: string
+                  maxLength: 1000
+                  description: Optional description of the task
+                completed:
+                  type: boolean
+                  default: false
+                  description: Whether the task is completed
+      responses:
+        '201':
+          description: Task created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/tasks/{task_id}:
+    get:
+      summary: Get a specific task
+      description: Retrieve a specific task by ID
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the task to retrieve
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user (for authorization)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved task
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update a task
+      description: Update an existing task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the task to update
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  minLength: 1
+                  maxLength: 200
+                description:
+                  type: string
+                  maxLength: 1000
+                completed:
+                  type: boolean
+      responses:
+        '200':
+          description: Task updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a task
+      description: Delete a specific task by ID
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: ID of the task to delete
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user (for authorization)
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Task deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/conversations:
+    get:
+      summary: Get all conversations for a user
+      description: Retrieve all conversations for the specified user
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user whose conversations to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Conversation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create a new conversation
+      description: Create a new conversation for a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: string
+                  description: ID of the user creating the conversation
+      responses:
+        '201':
+          description: Conversation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conversation'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/conversations/{conversation_id}:
+    get:
+      summary: Get a specific conversation with messages
+      description: Retrieve a specific conversation by ID along with its messages
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          description: ID of the conversation to retrieve
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user (for authorization)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved conversation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversationWithMessages'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a conversation
+      description: Delete a specific conversation by ID (also deletes associated messages)
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          description: ID of the conversation to delete
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user (for authorization)
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Conversation deleted successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/conversations/{conversation_id}/messages:
+    get:
+      summary: Get all messages in a conversation
+      description: Retrieve all messages in a specific conversation
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          description: ID of the conversation
+          schema:
+            type: integer
+        - name: user_id
+          in: query
+          required: true
+          description: ID of the user (for authorization)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successfully retrieved messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Add a message to a conversation
+      description: Add a new message to an existing conversation
+      parameters:
+        - name: conversation_id
+          in: path
+          required: true
+          description: ID of the conversation
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+                - role
+                - content
+              properties:
+                user_id:
+                  type: string
+                  description: ID of the user creating the message
+                role:
+                  type: string
+                  enum: [user, assistant]
+                  description: Role of the message sender
+                content:
+                  type: string
+                  minLength: 1
+                  description: Content of the message
+      responses:
+        '201':
+          description: Message added successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Task:
+      type: object
+      required:
+        - id
+        - user_id
+        - title
+        - completed
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the task
+          example: 1
+        user_id:
+          type: string
+          description: ID of the user who owns this task
+          example: "user_12345"
+        title:
+          type: string
+          description: Title of the task
+          minLength: 1
+          maxLength: 200
+          example: "Buy groceries"
+        description:
+          type: string
+          description: Optional description of the task
+          maxLength: 1000
+          example: "Milk, eggs, bread, fruits"
+        completed:
+          type: boolean
+          description: Whether the task is completed
+          default: false
+          example: false
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the task was created
+          example: "2023-01-01T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the task was last updated
+          example: "2023-01-01T12:00:00Z"
+
+    Conversation:
+      type: object
+      required:
+        - id
+        - user_id
+        - created_at
+        - updated_at
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the conversation
+          example: 1
+        user_id:
+          type: string
+          description: ID of the user who owns this conversation
+          example: "user_12345"
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the conversation was created
+          example: "2023-01-01T12:00:00Z"
+        updated_at:
+          type: string
+          format: date-time
+          description: Timestamp when the conversation was last updated
+          example: "2023-01-01T12:00:00Z"
+
+    ConversationWithMessages:
+      allOf:
+        - $ref: '#/components/schemas/Conversation'
+        - type: object
+          properties:
+            messages:
+              type: array
+              items:
+                $ref: '#/components/schemas/Message'
+
+    Message:
+      type: object
+      required:
+        - id
+        - user_id
+        - conversation_id
+        - role
+        - content
+        - created_at
+      properties:
+        id:
+          type: integer
+          description: Unique identifier for the message
+          example: 1
+        user_id:
+          type: string
+          description: ID of the user who owns this message
+          example: "user_12345"
+        conversation_id:
+          type: integer
+          description: ID of the conversation this message belongs to
+          example: 1
+        role:
+          type: string
+          enum: [user, assistant]
+          description: Role of the message sender
+          example: "user"
+        content:
+          type: string
+          description: Content of the message
+          minLength: 1
+          example: "I need to buy groceries"
+        created_at:
+          type: string
+          format: date-time
+          description: Timestamp when the message was created
+          example: "2023-01-01T12:00:00Z"
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid input parameters
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Invalid input parameters"
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Resource not found"
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "Internal server error occurred"
