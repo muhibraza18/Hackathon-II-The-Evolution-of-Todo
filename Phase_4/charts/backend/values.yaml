@@ -1,0 +1,100 @@
+# Default values for backend
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: todo-backend
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: "latest"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "backend-service"
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: "default"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 8000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  limits:
+    cpu: 500m
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables for the backend
+env:
+  FRONTEND_URL: "http://frontend-service:3000"
+  MCP_SERVER_URL: "http://mcp-service:8002"
+
+# Database configuration - these should be provided via secrets
+database:
+  host: "ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech"  # Neon PostgreSQL host
+  port: 5432
+  name: "neondb"
+  username: "neondb_owner"   # Neon database user
+  sslmode: "require"  # Require SSL for Neon
+
+# Secret values (these should be provided securely externally)
+secrets:
+  # Actual values from the environment
+  openaiApiKey: "AIzaSyBcu71TdcoamlUHmIjPSEG6FUWG2rnArhE"
+  authSecret: "2e7a66444e20fa4fbaf6e20bd06c94eca3ad1ae0aaca54c19f236786d9973328"
+  dbPassword: "npg_l3WKQFsvo7uH"  # Neon database password
+  databaseUrl: "postgresql+asyncpg://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"

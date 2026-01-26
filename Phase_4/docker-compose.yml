@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://username:password@host.docker.internal:5432/todo_chatbot
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:-}
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
+      - NEXT_PUBLIC_GEMINI_ENABLED=false
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/public:/app/public
