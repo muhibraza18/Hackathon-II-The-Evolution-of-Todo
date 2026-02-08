@@ -1,0 +1,136 @@
+# CLOUD ACCESS INFORMATION
+# DigitalOcean Kubernetes Deployment
+# Generated: <DATE>
+
+## Cluster Information
+
+Cluster ID: bfa88bea-fe4a-ea05-843b-2ae1761e9318
+Cluster Name: <Cluster Name>
+Region: <Region>
+
+## Access URLs
+
+Frontend: http://<EXTERNAL-IP>:3000
+Backend (Internal): http://backend-service:8000
+
+## Monitoring & Logging
+
+Grafana: http://<GRAFANA-IP>
+Grafana Username: admin
+Grafana Password: <run command below>
+
+kubectl get secret -n monitoring prometheus-grafana -o jsonpath="{.data.admin-password}" | base64 --decode
+
+Prometheus: http://localhost:9090 (port-forward required)
+
+## Port Forward Commands
+
+# Frontend (for local testing)
+kubectl port-forward svc/frontend-service 3000:3000
+
+# Backend (for local testing)
+kubectl port-forward svc/backend-service 8000:8000
+
+# Grafana (for local access)
+kubectl port-forward -n monitoring svc/prometheus-grafana 3001:80
+
+# Prometheus (for local access)
+kubectl port-forward -n monitoring svc/prometheus-kube-prometheus-prometheus 9090:9090
+
+## Useful Commands
+
+# Check pods
+kubectl get pods
+
+# Check services
+kubectl get svc
+
+# Check logs
+kubectl logs -l app=backend-service --tail=50 -f
+kubectl logs -l app=frontend-service --tail=50 -f
+
+# Dapr logs
+kubectl logs -l app=backend-service -c daprd --tail=50 -f
+
+# Get secrets
+kubectl get secrets
+
+# Describe resources
+kubectl describe pod <pod-name>
+kubectl describe svc <service-name>
+
+# Exec into pod
+kubectl exec -it <pod-name> -- /bin/bash
+
+## Helm Commands
+
+# List releases
+helm list
+
+# Get values
+helm get values backend
+helm get values frontend
+
+# Upgrade release
+helm upgrade backend ./charts/backend --values ./charts/backend/values-doks.yaml
+
+# Rollback
+helm rollback backend
+
+# Uninstall
+helm uninstall backend
+helm uninstall frontend
+
+## Redpanda Cloud
+
+Bootstrap: d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092
+Username: todo-phase5
+Console: https://redpanda.cloud
+
+## Database (Neon PostgreSQL)
+
+Host: ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech
+Port: 5432
+Database: neondb
+Username: neondb_owner
+SSL Mode: require
+
+## Troubleshooting
+
+# LoadBalancer pending
+kubectl describe svc frontend-service
+
+# Pod not starting
+kubectl describe pod <pod-name>
+kubectl logs <pod-name>
+
+# Dapr issues
+kubectl get pods -n dapr-system
+kubectl logs -n dapr-system -l app=dapr-sentry
+
+# Restart pod
+kubectl delete pod <pod-name>
+
+# Scale deployment
+kubectl scale deployment backend-service --replicas=2
+
+## Cleanup
+
+# Delete all resources
+helm uninstall backend
+helm uninstall frontend
+helm uninstall consumers
+helm uninstall prometheus -n monitoring
+helm uninstall loki -n monitoring
+
+# Delete secrets
+kubectl delete secret todo-backend-secrets
+kubectl delete secret redpanda-credentials
+
+# Delete Dapr components
+kubectl delete component kafka-pubsub
+kubectl delete configmap dapr-config
+
+---
+
+IMPORTANT: Store this file securely. It contains access information for your cloud deployment.

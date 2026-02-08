@@ -1,0 +1,37 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-pubsub
+  namespace: default
+spec:
+  type: pubsub.in-memory
+  version: v1
+  metadata:
+  - name: consumerID
+    value: "task-consumers"
+---
+# Topic: task-created
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-created-topic
+  namespace: default
+spec:
+  type: pubsub.in-memory
+  version: v1
+  metadata:
+  - name: consumerID
+    value: "task-created-consumer"
+---
+# Topic: task-reminder
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-reminder-pubsub
+  namespace: default
+spec:
+  type: pubsub.in-memory
+  version: v1
+  metadata:
+  - name: consumerID
+    value: "reminder-consumer"

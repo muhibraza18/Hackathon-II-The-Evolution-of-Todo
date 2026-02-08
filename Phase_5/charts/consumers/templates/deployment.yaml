@@ -1,0 +1,211 @@
+{{- if .Values.recurringTaskConsumer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "consumers.fullname" . }}-recurring-task-consumer
+  labels:
+    {{- include "consumers.labels" . | nindent 4 }}
+    app.kubernetes.io/component: recurring-task-consumer
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.recurringTaskConsumer.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "consumers.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: recurring-task-consumer
+  template:
+    metadata:
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "{{ include "consumers.fullname" . }}-recurring-task-consumer"
+        dapr.io/app-port: "8001"  # Port for health checks if needed
+        dapr.io/config: "dapr-config"
+        dapr.io/log-level: "info"
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "consumers.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: recurring-task-consumer
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "consumers.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-recurring-task-consumer
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.recurringTaskConsumer.image.repository }}:{{ .Values.recurringTaskConsumer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.recurringTaskConsumer.image.pullPolicy }}
+          command: ["python", "-m", "consumers.recurring_task_consumer"]
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.recurringTaskConsumer.env.DATABASE_URL | quote }}
+            - name: KAFKA_BROKER
+              value: {{ .Values.recurringTaskConsumer.env.KAFKA_BROKER | quote }}
+            - name: DAPR_HTTP_PORT
+              value: "3500"
+            - name: DAPR_GRPC_PORT
+              value: "50001"
+          resources:
+            {{- toYaml .Values.recurringTaskConsumer.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+{{- end }}
+
+{{- if .Values.notificationConsumer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "consumers.fullname" . }}-notification-consumer
+  labels:
+    {{- include "consumers.labels" . | nindent 4 }}
+    app.kubernetes.io/component: notification-consumer
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.notificationConsumer.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "consumers.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: notification-consumer
+  template:
+    metadata:
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "{{ include "consumers.fullname" . }}-notification-consumer"
+        dapr.io/app-port: "8002"  # Port for health checks if needed
+        dapr.io/config: "dapr-config"
+        dapr.io/log-level: "info"
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "consumers.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: notification-consumer
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "consumers.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-notification-consumer
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.notificationConsumer.image.repository }}:{{ .Values.notificationConsumer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.notificationConsumer.image.pullPolicy }}
+          command: ["python", "-m", "consumers.notification_consumer"]
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.notificationConsumer.env.DATABASE_URL | quote }}
+            - name: KAFKA_BROKER
+              value: {{ .Values.notificationConsumer.env.KAFKA_BROKER | quote }}
+            - name: DAPR_HTTP_PORT
+              value: "3500"
+            - name: DAPR_GRPC_PORT
+              value: "50001"
+          resources:
+            {{- toYaml .Values.notificationConsumer.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+---
+{{- end }}
+
+{{- if .Values.auditConsumer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "consumers.fullname" . }}-audit-consumer
+  labels:
+    {{- include "consumers.labels" . | nindent 4 }}
+    app.kubernetes.io/component: audit-consumer
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.auditConsumer.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "consumers.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: audit-consumer
+  template:
+    metadata:
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "{{ include "consumers.fullname" . }}-audit-consumer"
+        dapr.io/app-port: "8003"  # Port for health checks if needed
+        dapr.io/config: "dapr-config"
+        dapr.io/log-level: "info"
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "consumers.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: audit-consumer
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "consumers.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-audit-consumer
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.auditConsumer.image.repository }}:{{ .Values.auditConsumer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.auditConsumer.image.pullPolicy }}
+          command: ["python", "-m", "consumers.audit_consumer"]
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.auditConsumer.env.DATABASE_URL | quote }}
+            - name: KAFKA_BROKER
+              value: {{ .Values.auditConsumer.env.KAFKA_BROKER | quote }}
+            - name: DAPR_HTTP_PORT
+              value: "3500"
+            - name: DAPR_GRPC_PORT
+              value: "50001"
+          resources:
+            {{- toYaml .Values.auditConsumer.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}

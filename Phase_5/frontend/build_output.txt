@@ -1,0 +1,202 @@
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile:
+#1 transferring dockerfile: 1.58kB 0.1s done
+#1 DONE 0.4s
+
+#2 [internal] load metadata for docker.io/library/node:18-alpine
+#2 DONE 1.3s
+
+#3 [internal] load .dockerignore
+#3 transferring context:
+#3 transferring context: 96B 0.0s done
+#3 DONE 0.2s
+
+#4 [builder 1/6] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+#4 resolve docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e 0.1s done
+#4 DONE 0.1s
+
+#5 [builder 2/6] WORKDIR /app
+#5 CACHED
+
+#6 [runner  3/10] RUN apk add --no-cache curl
+#6 1.254 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+#6 2.324 fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+#6 3.741 (1/9) Installing brotli-libs (1.1.0-r2)
+#6 3.888 (2/9) Installing c-ares (1.34.6-r0)
+#6 3.999 (3/9) Installing libunistring (1.2-r0)
+#6 4.267 (4/9) Installing libidn2 (2.3.7-r0)
+#6 4.378 (5/9) Installing nghttp2-libs (1.64.0-r0)
+#6 4.499 (6/9) Installing libpsl (0.21.5-r3)
+#6 4.593 (7/9) Installing zstd-libs (1.5.6-r2)
+#6 4.879 (8/9) Installing libcurl (8.14.1-r2)
+#6 5.023 (9/9) Installing curl (8.14.1-r2)
+#6 5.162 Executing busybox-1.37.0-r12.trigger
+#6 5.241 OK: 14 MiB in 26 packages
+#6 DONE 5.8s
+
+#7 [internal] load build context
+#7 transferring context: 272.27kB 0.5s done
+#7 DONE 0.6s
+
+#8 [builder 3/6] COPY package*.json ./
+#8 DONE 0.2s
+
+#9 [runner  4/10] COPY package*.json ./
+#9 DONE 0.2s
+
+#10 [builder 4/6] RUN npm ci
+#10 4.157 npm warn EBADENGINE Unsupported engine {
+#10 4.157 npm warn EBADENGINE   package: 'react-router@7.12.0',
+#10 4.157 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#10 4.157 npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+#10 4.157 npm warn EBADENGINE }
+#10 4.159 npm warn EBADENGINE Unsupported engine {
+#10 4.159 npm warn EBADENGINE   package: 'react-router-dom@7.12.0',
+#10 4.159 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#10 4.159 npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+#10 4.159 npm warn EBADENGINE }
+#10 9.144 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#10 11.63 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#10 11.92 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+#10 20.77 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+#10 20.89 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+#10 22.35 npm warn deprecated glob@7.1.7: Glob versions prior to v9 are no longer supported
+#10 27.96 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+#10 152.9 
+#10 152.9 added 313 packages, and audited 314 packages in 3m
+#10 152.9 
+#10 152.9 126 packages are looking for funding
+#10 152.9   run `npm fund` for details
+#10 152.9 
+#10 152.9 found 0 vulnerabilities
+#10 152.9 npm notice
+#10 152.9 npm notice New major version of npm available! 10.8.2 -> 11.8.0
+#10 152.9 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+#10 152.9 npm notice To update run: npm install -g npm@11.8.0
+#10 152.9 npm notice
+#10 DONE 154.5s
+
+#11 [builder 3/6] COPY package*.json ./
+#11 CACHED
+
+#12 [builder 4/6] RUN npm ci
+#12 CACHED
+
+#13 [runner  5/10] RUN npm ci --only=production && npm cache clean --force
+#13 1.079 npm warn config only Use `--omit=dev` to omit dev dependencies from the install.
+#13 3.882 npm warn EBADENGINE Unsupported engine {
+#13 3.882 npm warn EBADENGINE   package: 'react-router@7.12.0',
+#13 3.882 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#13 3.882 npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+#13 3.882 npm warn EBADENGINE }
+#13 3.884 npm warn EBADENGINE Unsupported engine {
+#13 3.884 npm warn EBADENGINE   package: 'react-router-dom@7.12.0',
+#13 3.884 npm warn EBADENGINE   required: { node: '>=20.0.0' },
+#13 3.884 npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+#13 3.884 npm warn EBADENGINE }
+#13 ...
+
+#14 [builder 5/6] COPY . .
+#14 DONE 0.3s
+
+#15 [builder 6/6] RUN npm run build
+#15 3.141 
+#15 3.141 > todo-ai-chatbot-frontend@0.0.0 build
+#15 3.141 > next build
+#15 3.141 
+#15 9.354 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+#15 9.356 This information is used to shape Next.js' roadmap and prioritize features.
+#15 9.356 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+#15 9.356 https://nextjs.org/telemetry
+#15 9.363 
+#15 10.22   ▲ Next.js 14.2.35
+#15 10.22   - Environments: .env
+#15 10.23 
+#15 10.92    Creating an optimized production build ...
+#15 50.35  ✓ Compiled successfully
+#15 50.35    Linting and checking validity of types ...
+#15 ...
+
+#13 [runner  5/10] RUN npm ci --only=production && npm cache clean --force
+#13 447.2 
+#13 447.2 added 33 packages, and audited 34 packages in 7m
+#13 447.2 
+#13 447.2 4 packages are looking for funding
+#13 447.2   run `npm fund` for details
+#13 447.2 
+#13 447.2 found 0 vulnerabilities
+#13 447.2 npm notice
+#13 447.2 npm notice New major version of npm available! 10.8.2 -> 11.8.0
+#13 447.2 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.8.0
+#13 447.2 npm notice To update run: npm install -g npm@11.8.0
+#13 447.2 npm notice
+#13 448.2 npm warn using --force Recommended protections disabled.
+#13 DONE 453.3s
+
+#15 [builder 6/6] RUN npm run build
+#15 62.12    Collecting page data ...
+#15 69.43    Generating static pages (0/7) ...
+#15 70.91    Generating static pages (1/7) 
+#15 71.23    Generating static pages (3/7) 
+#15 74.25    Generating static pages (5/7) 
+#15 74.43  ✓ Generating static pages (7/7)
+#15 76.44    Finalizing page optimization ...
+#15 76.44    Collecting build traces ...
+#15 96.02 
+#15 96.09 Route (app)                              Size     First Load JS
+#15 96.09 ┌ ○ /                                    3.45 kB        94.2 kB
+#15 96.09 ├ ○ /_not-found                          873 B          88.2 kB
+#15 96.09 ├ ○ /chat                                6.64 kB        97.4 kB
+#15 96.09 ├ ○ /login                               3.3 kB         97.1 kB
+#15 96.09 └ ○ /register                            3.36 kB        97.2 kB
+#15 96.09 + First Load JS shared by all            87.3 kB
+#15 96.09   ├ chunks/117-d0aa9486d6cf1a7a.js       31.7 kB
+#15 96.09   ├ chunks/fd9d1056-f8a2d551cbb94c85.js  53.6 kB
+#15 96.09   └ other shared chunks (total)          1.95 kB
+#15 96.09 
+#15 96.09 
+#15 96.09 ○  (Static)  prerendered as static content
+#15 96.09 
+#15 DONE 97.2s
+
+#16 [runner  4/10] COPY package*.json ./
+#16 CACHED
+
+#17 [runner  5/10] RUN npm ci --only=production && npm cache clean --force
+#17 CACHED
+
+#18 [runner  6/10] COPY --from=builder /app/.next ./.next
+#18 DONE 1.5s
+
+#19 [runner  7/10] COPY --from=builder /app/public ./public
+#19 DONE 0.3s
+
+#20 [runner  8/10] COPY --from=builder /app/next.config.js ./
+#20 DONE 0.4s
+
+#21 [runner  9/10] COPY --from=builder /app/package.json ./
+#21 DONE 0.3s
+
+#22 [runner 10/10] COPY --from=builder /app/vercel.json ./
+#22 DONE 0.2s
+
+#23 exporting to image
+#23 exporting layers
+#23 exporting layers 82.7s done
+#23 exporting manifest sha256:b30deae25b9b4bb69e15e1df343cd09f9fb634be84813e7ad537f19290786974
+#23 exporting manifest sha256:b30deae25b9b4bb69e15e1df343cd09f9fb634be84813e7ad537f19290786974 0.3s done
+#23 exporting config sha256:68abfbe38ec98579b03f681b61471a80734d9f84b0ddcf63debbc60cca1b85a7
+#23 exporting config sha256:68abfbe38ec98579b03f681b61471a80734d9f84b0ddcf63debbc60cca1b85a7 0.2s done
+#23 exporting attestation manifest sha256:24f0adfc1334e8d57660c596259db3a75d988471e18dccec091fddb737d5f270
+#23 exporting attestation manifest sha256:24f0adfc1334e8d57660c596259db3a75d988471e18dccec091fddb737d5f270 0.5s done
+#23 exporting manifest list sha256:a7c6134348add0147fb280dd4830f7941f14cc20c96f82f227c38f4e0100857f
+#23 exporting manifest list sha256:a7c6134348add0147fb280dd4830f7941f14cc20c96f82f227c38f4e0100857f 0.3s done
+#23 naming to docker.io/library/todo-frontend:latest
+#23 naming to docker.io/library/todo-frontend:latest 0.1s done
+#23 unpacking to docker.io/library/todo-frontend:latest
+#23 unpacking to docker.io/library/todo-frontend:latest 82.7s done
+#23 DONE 167.1s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/i0nbhky5epm54low39s7mz7mx

@@ -1,0 +1,15 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: postgresql
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+    - name: connectionString
+      secretKeyRef:
+        name: postgresql-connection-string
+        key: connectionstring
+scopes:
+  - todo-backend
+  - todo-consumers

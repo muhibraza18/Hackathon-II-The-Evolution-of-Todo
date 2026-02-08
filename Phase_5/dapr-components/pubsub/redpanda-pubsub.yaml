@@ -1,0 +1,67 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: kafka-service:9092
+  - name: consumerGroup
+    value: task-consumers
+  - name: clientID
+    value: dapr-task-pubsub
+  - name: authRequired
+    value: "false"
+  - name: autoEnableSsl
+    value: "false"
+  - name: autoCommit
+    value: "true"
+  - name: startOffset
+    value: "newest"
+  - name: maxMessageBytes
+    value: "1048576"
+---
+# Topic: task-created
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-created-topic
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: kafka-service:9092
+  - name: consumerGroup
+    value: task-created-consumer
+  - name: clientID
+    value: dapr-task-created
+  - name: authRequired
+    value: "false"
+  - name: autoEnableSsl
+    value: "false"
+---
+# Topic: task-reminder
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-reminder-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: kafka-service:9092
+  - name: consumerGroup
+    value: reminder-consumer
+  - name: clientID
+    value: dapr-reminder
+  - name: authRequired
+    value: "false"
+  - name: autoEnableSsl
+    value: "false"

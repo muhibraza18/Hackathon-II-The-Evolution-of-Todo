@@ -1,0 +1,15 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: dapr-config
+  namespace: dapr-system
+spec:
+  mtls:
+    enabled: false
+    controlPlaneTrustDomain: "localhost"
+    sentryAddress:
+      namespace: dapr-system
+      name: dapr-sentry
+      port: 50001
+  tracing:
+    samplingRate: "1"

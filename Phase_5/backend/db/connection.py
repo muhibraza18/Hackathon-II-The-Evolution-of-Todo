@@ -1,0 +1,151 @@
+from sqlmodel import create_engine, Session
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+from sqlalchemy.orm import sessionmaker
+from typing import Generator
+from contextlib import asynccontextmanager
+from ..config import settings
+import logging
+import urllib.parse
+
+# Set up logging
+logger = logging.getLogger(__name__)
+
+# Synchronous engine for FastAPI (existing) - uses psycopg2
+database_url_sync = settings.database_url.replace("+asyncpg", "").replace("asyncpg", "psycopg2")
+
+engine = create_engine(
+    database_url_sync,
+    echo=settings.log_level == "DEBUG",
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True,
+)
+
+def get_db_session() -> Generator[Session, None, None]:
+    """
+    Synchronous dependency generator for database sessions.
+
+    Used in FastAPI endpoints.
+    Yields a database session for use in FastAPI endpoints.
+    """
+    with Session(engine) as session:
+        yield session
+
+
+# ============================================
+# ASYNC DATABASE SESSION (for MCP server - uses asyncpg)
+# ============================================
+
+def build_clean_asyncpg_url(original_url: str) -> str:
+    """
+    Build a clean asyncpg URL from the original database URL.
+
+    FOR ASYNCPG IN KUBERNETES:
+    - Removes any existing SSL parameters that are psycopg2-specific (sslmode, etc.)
+    - asyncpg does NOT support sslmode parameter - only accepts ssl parameter
+    - For local Kubernetes PostgreSQL, use no SSL parameters
+    """
+    logger.info(f"🔧 MCP SERVER: Original asyncpg URL received: {original_url}")
+
+    # Parse the URL to extract components safely
+    parsed = urllib.parse.urlparse(original_url)
+
+    # Extract query parameters
+    query_params = urllib.parse.parse_qs(parsed.query, keep_blank_values=True)
+
+    # Filter out psycopg2-specific SSL parameters that asyncpg doesn't support
+    allowed_params = {}
+    for key, values in query_params.items():
+        if key.lower() not in ['sslmode', 'sslcert', 'sslkey', 'sslrootcert', 'sslfactory', 'sslcompression', 'ssl']:
+            # Keep the original parameter value (first value if multiple)
+            allowed_params[key] = values[0] if values else ''
+
+    # Reconstruct query string without SSL parameters
+    new_query = urllib.parse.urlencode(allowed_params, doseq=True)
+
+    # Reconstruct the URL without SSL parameters
+    clean_parsed = parsed._replace(query=new_query)
+    clean_url = urllib.parse.urlunparse(clean_parsed)
+
+    logger.info(f"✅ MCP SERVER: Clean asyncpg URL (without unsupported SSL params): {clean_url}")
+    return clean_url
+
+
+# Debug the database URL to see what it is
+logger.info(f"🔍 MCP SERVER: Database URL in settings: {settings.database_url}")
+
+# Only create async engine for PostgreSQL databases, not SQLite
+is_postgres = settings.database_url.startswith((
+    "postgresql://", "postgres://",
+    "postgresql+asyncpg://", "postgres+asyncpg://",
+    "postgresql+psycopg2://", "postgres+psycopg2://"
+))
+
+logger.info(f"🔍 MCP SERVER: Is PostgreSQL URL? {is_postgres}")
+
+# Initialize async components
+async_engine = None
+async_session_maker = None
+database_url_async = None
+
+if is_postgres:
+    logger.info("=" * 80)
+    logger.info("🚀 MCP SERVER: Building async database URL for asyncpg...")
+    database_url_async = build_clean_asyncpg_url(settings.database_url)
+    logger.info("=" * 80)
+
+    # Create async engine with proper asyncpg configuration for Kubernetes
+    # For local Kubernetes PostgreSQL, don't use SSL parameters that asyncpg doesn't support
+    async_engine = create_async_engine(
+        database_url_async,
+        echo=settings.log_level == "DEBUG",
+        pool_size=10,
+        max_overflow=20,
+        pool_pre_ping=True,
+        future=True
+    )
+
+    # Create async session maker
+    async_session_maker = sessionmaker(
+        async_engine,
+        class_=AsyncSession,
+        expire_on_commit=False
+    )
+    logger.info("✅ MCP SERVER: Async engine and session maker initialized for asyncpg")
+else:
+    logger.warning("⚠️  MCP SERVER: Async engine skipped for non-PostgreSQL database")
+
+
+@asynccontextmanager
+async def get_db_session_async():
+    """
+    Async context manager for database sessions.
+
+    Used in MCP server and other async contexts.
+    Usage: async with get_db_session_async() as session:
+    """
+    if async_session_maker is None:
+        raise RuntimeError("MCP SERVER: Async session maker not initialized - database not available")
+
+    async with async_session_maker() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            logger.error("MCP SERVER: Database transaction rolled back due to error")
+            raise
+        finally:
+            await session.close()
+
+
+# Export for use in other modules
+__all__ = [
+    "engine",
+    "get_db_session",
+    "get_db_session_async",
+    "build_clean_asyncpg_url",
+    "async_engine",
+    "async_session_maker"
+]

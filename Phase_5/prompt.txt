@@ -1,0 +1,51 @@
+Still I am getting error in frontend When trying to login 
+
+🔗 API baseUrl configured: http://134.199.184.47:8000
+layout-1fa9e07601636f36.js:1 🔍 AuthProvider checking existing session: Object
+layout-1fa9e07601636f36.js:1 ❌ No existing session found
+page-28b8fa6f5cc7ffd1.js:1 🔐 LoginForm.handleSubmit() - initiating login process
+page-28b8fa6f5cc7ffd1.js:1 🔐 authService.login() called with credentials: Object
+125-d1b50d007810bf2b.js:1 DEBUG: Login function called with credentials: Object
+125-d1b50d007810bf2b.js:1 DEBUG: Request payload being sent: {"email":"spacework035@gmail.com","password":"Muhib@raza1"}
+125-d1b50d007810bf2b.js:1 DEBUG: Request options: Object
+125-d1b50d007810bf2b.js:1 DEBUG: Full request URL: http://134.199.184.47:8000/api/auth/login
+login:1 Access to fetch at 'http://134.199.184.47:8000/api/auth/login' from origin 'http://24.199.72.246:3000' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.Understand this error
+134.199.184.47:8000/api/auth/login:1  Failed to load resource: net::ERR_FAILEDUnderstand this error
+125-d1b50d007810bf2b.js:1 DEBUG: Login error response: TypeError: Failed to fetch
+    at o.request (125-d1b50d007810bf2b.js:1:10261)
+    at o.login (125-d1b50d007810bf2b.js:1:11818)
+    at Object.login (page-28b8fa6f5cc7ffd1.js:1:13319)
+    at h (page-28b8fa6f5cc7ffd1.js:1:746)
+    at Object.a_ (fd9d1056-fadebc0e0df3d1ff.js:1:72144)
+    at aR (fd9d1056-fadebc0e0df3d1ff.js:1:72298)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:139237
+    at sF (fd9d1056-fadebc0e0df3d1ff.js:1:139336)
+    at sM (fd9d1056-fadebc0e0df3d1ff.js:1:139750)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:145893
+117-df3024fe36accb84.js:1 DEBUG: Full error details: TypeError: Failed to fetch
+    at o.request (125-d1b50d007810bf2b.js:1:10261)
+    at o.login (125-d1b50d007810bf2b.js:1:11818)
+    at Object.login (page-28b8fa6f5cc7ffd1.js:1:13319)
+    at h (page-28b8fa6f5cc7ffd1.js:1:746)
+    at Object.a_ (fd9d1056-fadebc0e0df3d1ff.js:1:72144)
+    at aR (fd9d1056-fadebc0e0df3d1ff.js:1:72298)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:139237
+    at sF (fd9d1056-fadebc0e0df3d1ff.js:1:139336)
+    at sM (fd9d1056-fadebc0e0df3d1ff.js:1:139750)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:145893
+push.2304.window.console.error @ 117-df3024fe36accb84.js:1Understand this error
+117-df3024fe36accb84.js:1 ❌ Login error in authService: TypeError: Failed to fetch
+    at o.request (125-d1b50d007810bf2b.js:1:10261)
+    at o.login (125-d1b50d007810bf2b.js:1:11818)
+    at Object.login (page-28b8fa6f5cc7ffd1.js:1:13319)
+    at h (page-28b8fa6f5cc7ffd1.js:1:746)
+    at Object.a_ (fd9d1056-fadebc0e0df3d1ff.js:1:72144)
+    at aR (fd9d1056-fadebc0e0df3d1ff.js:1:72298)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:139237
+    at sF (fd9d1056-fadebc0e0df3d1ff.js:1:139336)
+    at sM (fd9d1056-fadebc0e0df3d1ff.js:1:139750)
+    at fd9d1056-fadebc0e0df3d1ff.js:1:145893
+push.2304.window.console.error @ 117-df3024fe36accb84.js:1Understand this error
+page-28b8fa6f5cc7ffd1.js:1 ✅ AuthService login result: Object
+117-df3024fe36accb84.js:1 ❌ Login failed at authService level: Failed to fetch
+push.2304.window.console.error @ 117-df3024fe36accb84.js:1Understand this error

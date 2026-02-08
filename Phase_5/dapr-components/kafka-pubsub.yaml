@@ -1,0 +1,51 @@
+# Dapr Pub/Sub Component for Redpanda Cloud
+# This component enables event-driven architecture with Redpanda Cloud (Kafka-compatible)
+
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: kafka-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+    # Redpanda Cloud bootstrap server
+    - name: brokers
+      value: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+
+    # SASL Authentication required
+    - name: authRequired
+      value: "true"
+
+    # SASL Username from Kubernetes Secret
+    - name: saslUsername
+      secretKeyRef:
+        name: redpanda-credentials
+        key: username
+
+    # SASL Password from Kubernetes Secret
+    - name: saslPassword
+      secretKeyRef:
+        name: redpanda-credentials
+        key: password
+
+    # SASL Mechanism
+    - name: saslMechanism
+      value: "SCRAM-SHA-256"
+
+    # Security Protocol
+    - name: securityProtocol
+      value: "SASL_SSL"
+
+    # Consumer Group (for scalability)
+    - name: consumerGroup
+      value: "todo-consumer-group"
+
+    # Initial offset for new consumer groups
+    - name: initialOffset
+      value: "newest"
+
+    # Maximum message size (10MB)
+    - name: maxMessageBytes
+      value: "10485760"

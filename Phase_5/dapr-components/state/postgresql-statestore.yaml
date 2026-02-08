@@ -1,0 +1,31 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: state-postgresql
+  namespace: default
+spec:
+  type: state.postgresql
+  version: v1
+  metadata:
+  - name: connectionString
+    secretKeyRef:
+      name: postgresql-connection-string
+      key: connectionString
+  - name: actorStateStore
+    value: "true"
+  - name: keyPrefix
+    value: "dapr"
+  - name: tableName
+    value: "dapr_state_store"
+  - name: timeout
+    value: "30s"
+  - name: minReconnectInterval
+    value: "1s"
+  - name: maxReconnectInterval
+    value: "30s"
+  - name: healthIndicators
+    value: "true"
+  - name: disableMigrations
+    value: "false"
+auth:
+  secretStore: kubernetes-secrets

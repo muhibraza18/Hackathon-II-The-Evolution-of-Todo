@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mcp-db-init
+spec:
+  template:
+    spec:
+      containers:
+      - name: db-init
+        image: mcp-backend:latest
+        command: ["/usr/local/bin/python"]
+        args: ["/app/init_db.py"]
+        env:
+        - name: DATABASE_URL
+          value: "postgresql+asyncpg://postgres:postgrespassword@postgres-mcp-service:5432/todo_chatbot"
+        workingDir: /app
+        volumeMounts:
+        - name: init-script
+          mountPath: /app/init_db.py
+          subPath: init_db.py
+      volumes:
+      - name: init-script
+        configMap:
+          name: mcp-db-init-script
+      restartPolicy: OnFailure

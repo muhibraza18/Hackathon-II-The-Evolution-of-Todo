@@ -1,0 +1,57 @@
+# DigitalOcean Kubernetes (DOKS) specific values for frontend
+# This file overrides values.yaml for cloud deployment
+
+replicaCount: 1
+
+image:
+  repository: muhibraza/todo-frontend
+  pullPolicy: Always
+  tag: "doks-v8"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "frontend-service"
+
+serviceAccount:
+  create: false
+  name: "default"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer  # CHANGED from NodePort for public access
+  port: 3000
+  # DigitalOcean will automatically assign an external IP
+  annotations: {}
+    # service.beta.kubernetes.io/do-loadbalancer-size: "lb-small"  # Optional: specify LB size
+
+ingress:
+  enabled: false
+
+resources:
+  # Cloud resource limits
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables for the frontend
+env:
+  NEXT_PUBLIC_API_URL: "http://134.199.184.47:8000"
+  NEXT_PUBLIC_API_BASE_URL: "http://134.199.184.47:8000"
+  NEXT_PUBLIC_GEMINI_ENABLED: "false"

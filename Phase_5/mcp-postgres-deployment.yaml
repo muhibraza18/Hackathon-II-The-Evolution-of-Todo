@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-mcp
+  labels:
+    app: postgres-mcp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-mcp
+  template:
+    metadata:
+      labels:
+        app: postgres-mcp
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:13
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_DB
+          value: "todo_chatbot"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "postgrespassword"
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-mcp-service
+spec:
+  selector:
+    app: postgres-mcp
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+  type: ClusterIP

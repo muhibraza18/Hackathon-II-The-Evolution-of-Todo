@@ -1,0 +1,106 @@
+# Dapr Pub/Sub Component for Redpanda Cloud
+# This component connects to Redpanda Cloud for event streaming
+
+---
+# Main Pub/Sub component
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: kafka-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+  - name: authRequired
+    value: "true"
+  - name: saslUsername
+    secretKeyRef:
+      name: redpanda-credentials
+      key: username
+  - name: saslPassword
+    secretKeyRef:
+      name: redpanda-credentials
+      key: password
+  - name: saslMechanism
+    value: "SCRAM-SHA-256"
+  - name: securityProtocol
+    value: "SASL_SSL"
+  - name: consumerGroup
+    value: "task-consumers"
+  - name: clientID
+    value: "todo-backend-doks"
+  - name: autoEnableSsl
+    value: "true"
+  - name: startOffset
+    value: "newest"
+  - name: maxMessageBytes
+    value: "1048576"
+---
+# Task created topic component
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-created-topic
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+  - name: authRequired
+    value: "true"
+  - name: saslUsername
+    secretKeyRef:
+      name: redpanda-credentials
+      key: username
+  - name: saslPassword
+    secretKeyRef:
+      name: redpanda-credentials
+      key: password
+  - name: saslMechanism
+    value: "SCRAM-SHA-256"
+  - name: securityProtocol
+    value: "SASL_SSL"
+  - name: consumerGroup
+    value: "task-created-consumer"
+  - name: clientID
+    value: "todo-task-created"
+  - name: autoEnableSsl
+    value: "true"
+---
+# Task reminder topic component
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: task-reminder-pubsub
+  namespace: default
+spec:
+  type: pubsub.kafka
+  version: v1
+  metadata:
+  - name: brokers
+    value: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+  - name: authRequired
+    value: "true"
+  - name: saslUsername
+    secretKeyRef:
+      name: redpanda-credentials
+      key: username
+  - name: saslPassword
+    secretKeyRef:
+      name: redpanda-credentials
+      key: password
+  - name: saslMechanism
+    value: "SCRAM-SHA-256"
+  - name: securityProtocol
+    value: "SASL_SSL"
+  - name: consumerGroup
+    value: "reminder-consumer"
+  - name: clientID
+    value: "todo-reminder"
+  - name: autoEnableSsl
+    value: "true"

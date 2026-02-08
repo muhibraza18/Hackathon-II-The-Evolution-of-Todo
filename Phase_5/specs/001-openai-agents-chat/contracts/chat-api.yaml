@@ -1,0 +1,75 @@
+openapi: 3.0.0
+info:
+  title: OpenAI Agents Chat API for Todo AI Chatbot
+  version: 1.0.0
+  description: API for interacting with AI assistant that manages tasks via MCP tools
+
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Send a message to the AI assistant
+      description: Processes user message and returns AI response with any tool calls executed
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: Unique identifier for the user
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: integer
+                  description: ID of existing conversation (optional, creates new if absent)
+                  example: 123
+                message:
+                  type: string
+                  description: User's natural language message
+                  example: "Add a task to buy groceries"
+              required:
+                - message
+      responses:
+        '200':
+          description: Successful response from AI assistant
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: integer
+                    description: ID of the conversation
+                    example: 123
+                  response:
+                    type: string
+                    description: AI assistant's response
+                    example: "I've added the task 'buy groceries' to your list."
+                  tool_calls:
+                    type: array
+                    description: List of MCP tools invoked during processing
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          description: Name of the MCP tool called
+                          example: "add_task"
+                        arguments:
+                          type: object
+                          description: Arguments passed to the tool
+                        result:
+                          type: object
+                          description: Result from the tool execution
+              required:
+                - conversation_id
+                - response
+                - tool_calls
+        '400':
+          description: Bad request - invalid input format
+        '500':
+          description: Internal server error

@@ -1,0 +1,109 @@
+# DigitalOcean Kubernetes (DOKS) specific values for backend
+# This file overrides values.yaml for cloud deployment
+
+replicaCount: 1
+
+image:
+  repository: muhibraza/todo-backend
+  pullPolicy: Always
+  tag: "doks-v4"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "backend-service"
+
+serviceAccount:
+  create: false
+  name: "default"
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: LoadBalancer  # Exposed for external frontend access
+  port: 8000
+
+ingress:
+  enabled: false
+
+resources:
+  # Cloud resource limits - adjusted for DigitalOcean basic nodes
+  limits:
+    cpu: 1000m
+    memory: 2Gi
+  requests:
+    cpu: 250m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Environment variables for the backend
+env:
+  FRONTEND_URL: "http://24.199.72.246:3000"
+  MCP_SERVER_URL: "http://mcp-service:8002"
+
+# Database configuration - Neon PostgreSQL (cloud-hosted)
+database:
+  host: "ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech"
+  port: 5432
+  name: "neondb"
+  username: "neondb_owner"
+  sslmode: "require"
+
+# Secret configuration - use existing Kubernetes Secret
+secrets:
+  # Reference to pre-created Kubernetes Secret
+  existingSecret: "todo-backend-secrets"
+  # These values are ignored when existingSecret is set
+  openaiApiKey: ""  # Loaded from secret
+  authSecret: ""  # Loaded from secret
+  dbPassword: ""  # Loaded from secret
+  databaseUrl: ""  # Loaded from secret
+
+# Dapr configuration for cloud
+dapr:
+  enabled: true
+  appId: "todo-backend"
+  appPort: "8000"
+  config: "dapr-config"
+  enable-mtls: "false"
+  components:
+    # Redpanda Cloud Pub/Sub
+    - name: kafka-pubsub
+      type: pubsub.kafka
+      version: v1
+      metadata:
+        - name: brokers
+          value: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+        - name: authRequired
+          value: "true"
+        - name: saslUsername
+          secretKeyRef:
+            name: redpanda-credentials
+            key: username
+        - name: saslPassword
+          secretKeyRef:
+            name: redpanda-credentials
+            key: password
+        - name: saslMechanism
+          value: "SCRAM-SHA-256"
+        - name: securityProtocol
+          value: "SASL_SSL"
+        - name: consumerGroup
+          value: "task-consumers"
+        - name: clientID
+          value: "todo-backend-doks"
+        - name: autoEnableSsl
+          value: "true"
+        - name: startOffset
+          value: "newest"

@@ -1,0 +1,332 @@
+openapi: 3.0.3
+info:
+  title: Todo AI Chatbot - Phase V Reminders API
+  description: API endpoints for Redpanda Cloud integration and real-time reminders
+  version: 5.0.0
+
+servers:
+  - url: http://localhost:8000
+    description: Local development (Minikube port-forward)
+
+tags:
+  - name: reminders
+    description: Reminder management operations
+  - name: tasks
+    description: Task operations with reminder integration
+
+paths:
+  /api/tasks/{task_id}/reminder:
+    post:
+      tags:
+        - reminders
+      summary: Create or update reminder for a task
+      description: |
+        Creates a reminder for a task with the specified due time.
+        Publishes a reminder.scheduled event to Redpanda Cloud.
+        Returns fallback mode if Redpanda connection fails.
+      operationId: createReminder
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the task to add reminder to
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReminderRequest'
+            examples:
+              in3Minutes:
+                summary: Reminder in 3 minutes
+                value:
+                  due_time: "2025-02-07T12:03:00Z"
+              tomorrow:
+                summary: Reminder tomorrow at 9 AM
+                value:
+                  due_time: "2025-02-08T09:00:00Z"
+      responses:
+        '201':
+          description: Reminder created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderResponse'
+        '400':
+          description: Invalid request (past time, invalid format)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+              example:
+                detail: "Due time must be in the future"
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Server error or Redpanda fallback mode
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/Error'
+                  - $ref: '#/components/schemas/ReminderFallbackResponse'
+              example:
+                detail: "Reminder scheduled but cloud publish failed"
+                reminder_id: 123
+                fallback_mode: true
+
+  /api/tasks/pending-reminders:
+    get:
+      tags:
+        - reminders
+      summary: Get pending reminders for current user
+      description: |
+        Returns all pending reminders for the authenticated user's tasks.
+        Used by frontend to determine which tasks need toast notifications.
+      operationId: getPendingReminders
+      security:
+        - SessionAuth: []
+      parameters:
+        - name: within_minutes
+          in: query
+          schema:
+            type: integer
+            default: 5
+            minimum: 1
+            maximum: 60
+          description: Only return reminders due within this many minutes
+      responses:
+        '200':
+          description: List of pending reminders
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PendingRemindersResponse'
+
+  /api/tasks:
+    get:
+      tags:
+        - tasks
+      summary: Get all tasks for current user
+      description: |
+        Returns all tasks with reminder status and overdue calculations.
+        Enhanced for Phase V to include is_overdue and reminder_due_soon flags.
+      operationId: getTasks
+      security:
+        - SessionAuth: []
+      responses:
+        '200':
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TasksResponse'
+
+  /api/tasks:
+    post:
+      tags:
+        - tasks
+      summary: Create a new task
+      description: |
+        Creates a new task. If due_date includes a time component,
+        automatically creates a reminder and publishes to Redpanda Cloud.
+      operationId: createTask
+      security:
+        - SessionAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: Task created (with reminder if due_time provided)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskResponse'
+
+components:
+  securitySchemes:
+    SessionAuth:
+      type: apiKey
+      in: cookie
+      name: session_token
+      description: Session-based authentication using session_token cookie
+
+  schemas:
+    CreateReminderRequest:
+      type: object
+      required:
+        - due_time
+      properties:
+        due_time:
+          type: string
+          format: date-time
+          description: UTC ISO 8601 timestamp when reminder should trigger
+
+    ReminderResponse:
+      type: object
+      properties:
+        reminder_id:
+          type: integer
+          example: 123
+        task_id:
+          type: integer
+          example: 456
+        due_time:
+          type: string
+          format: date-time
+          example: "2025-02-07T12:03:00Z"
+        status:
+          type: string
+          enum: [pending, sent, failed]
+          example: "pending"
+        event_published:
+          type: boolean
+          example: true
+
+    ReminderFallbackResponse:
+      type: object
+      properties:
+        reminder_id:
+          type: integer
+          example: 123
+        fallback_mode:
+          type: boolean
+          example: true
+        detail:
+          type: string
+          example: "Reminder scheduled but cloud publish failed"
+
+    PendingRemindersResponse:
+      type: object
+      properties:
+        reminders:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: 123
+              task_id:
+                type: integer
+                example: 456
+              title:
+                type: string
+                example: "Get medicine"
+              due_time:
+                type: string
+                format: date-time
+                example: "2025-02-07T12:03:00Z"
+              priority:
+                type: string
+                enum: [high, medium, low]
+                example: "high"
+              is_overdue:
+                type: boolean
+                example: false
+              seconds_until_due:
+                type: integer
+                description: Seconds until due time (negative if overdue)
+                example: 180
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+          maxLength: 255
+          example: "Get medicine"
+        description:
+          type: string
+          example: "Pick up prescription from pharmacy"
+        due_date:
+          type: string
+          format: date-time
+          description: If time component included, auto-creates reminder
+          example: "2025-02-07T12:03:00Z"
+        priority:
+          type: string
+          enum: [high, medium, low]
+          default: "medium"
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["health", "urgent"]
+        recurring_config:
+          type: object
+          properties:
+            frequency:
+              type: string
+              enum: [daily, weekly, monthly]
+            end_date:
+              type: string
+              format: date-time
+
+    TaskResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 456
+        title:
+          type: string
+          example: "Get medicine"
+        description:
+          type: string
+          nullable: true
+        due_date:
+          type: string
+          format: date-time
+          nullable: true
+        priority:
+          type: string
+          enum: [high, medium, low]
+        completed:
+          type: boolean
+        is_overdue:
+          type: boolean
+          description: Calculated field: due_date < now()
+          example: false
+        has_reminder:
+          type: boolean
+          description: True if reminder exists for this task
+          example: true
+        reminder_due_soon:
+          type: boolean
+          description: True if reminder due within 5 minutes
+          example: true
+        tags:
+          type: array
+          items:
+            type: string
+          example: ["health", "urgent"]
+
+    TasksResponse:
+      type: object
+      properties:
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskResponse'
+
+    Error:
+      type: object
+      properties:
+        detail:
+          type: string
+          example: "Due time must be in the future"

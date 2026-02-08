@@ -1,0 +1,109 @@
+# DigitalOcean Kubernetes (DOKS) specific values for consumers
+# This file overrides values.yaml for cloud deployment
+
+# Image configuration
+image:
+  repository: muhibraza/todo-consumers
+  pullPolicy: Always
+  tag: "doks-v1"
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Autoscaling configuration
+autoscaling:
+  enabled: false
+
+# Consumer service configurations
+recurringTaskConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: muhibraza/todo-consumers
+    pullPolicy: Always
+    tag: "doks-v1"
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+    KAFKA_SASL_USERNAME: "todo-phase5"
+    KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+    KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+    KAFKA_SASL_PASSWORD_SECRET: "redpanda-credentials"  # Secret name
+    KAFKA_SASL_PASSWORD_KEY: "password"  # Key in secret
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+notificationConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: muhibraza/todo-consumers
+    pullPolicy: Always
+    tag: "doks-v1"
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+    KAFKA_SASL_USERNAME: "todo-phase5"
+    KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+    KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+    KAFKA_SASL_PASSWORD_SECRET: "redpanda-credentials"
+    KAFKA_SASL_PASSWORD_KEY: "password"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+auditConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: muhibraza/todo-consumers
+    pullPolicy: Always
+    tag: "doks-v1"
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "d63i6urt489913voun8g.any.us-east-1.mpx.prd.cloud.redpanda.com:9092"
+    KAFKA_SASL_USERNAME: "todo-phase5"
+    KAFKA_SASL_MECHANISM: "SCRAM-SHA-256"
+    KAFKA_SECURITY_PROTOCOL: "SASL_SSL"
+    KAFKA_SASL_PASSWORD_SECRET: "redpanda-credentials"
+    KAFKA_SASL_PASSWORD_KEY: "password"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+# Dapr annotations for consumers
+dapr:
+  enabled: true
+  config: "dapr-config"
+  enable-mtls: "false"

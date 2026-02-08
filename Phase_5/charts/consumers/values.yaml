@@ -1,0 +1,99 @@
+# Default values for consumers chart
+
+# Image configuration
+image:
+  repository: todo-consumers
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Autoscaling configuration
+autoscaling:
+  enabled: false
+
+# Consumer service configurations
+recurringTaskConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: todo-consumers
+    pullPolicy: IfNotPresent
+    tag: ""
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "kafka:9092"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+notificationConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: todo-consumers
+    pullPolicy: IfNotPresent
+    tag: ""
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "kafka:9092"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+auditConsumer:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: todo-consumers
+    pullPolicy: IfNotPresent
+    tag: ""
+  env:
+    DATABASE_URL: "postgresql://neondb_owner:npg_l3WKQFsvo7uH@ep-calm-frost-ahdmlrul-pooler.c-3.us-east-1.aws.neon.tech:5432/neondb?sslmode=require"
+    KAFKA_BROKER: "kafka:9092"
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

@@ -1,0 +1,1 @@
+{"title":"Test Redis PubSub Task","description":"This task should trigger reminder via Redis pub/sub","due_date":"2026-02-06T00:28:00","priority":"medium","status":"pending","tags":["redis-pubsub-test"]}
